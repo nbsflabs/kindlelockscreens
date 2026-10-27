@@ -1,0 +1,31 @@
+# Web server config (Caddy). The domain is not set here: it comes from the
+# SITE_DOMAIN environment variable, e.g. SITE_DOMAIN=example.com.
+
+www.{$SITE_DOMAIN} {
+	redir https://{$SITE_DOMAIN}{uri}
+}
+
+{$SITE_DOMAIN} {
+	root * /srv/kindlelockscreens/public
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# Browsers must check for a newer version of every file before using a cached copy,
+		# so a fix is picked up on the next page load.
+		Cache-Control "no-cache"
+		# Everything is served from this site: no third-party scripts, styles or fonts.
+		# blob:/data: images are the visitor's own photo; wasm and the blob: worker are the
+		# HEIC converter.
+		Content-Security-Policy "default-src 'self'; img-src 'self' blob: data:; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+	}
+
+	# Optional: the counter in counter/ (the site works without it).
+	reverse_proxy /api/* 127.0.0.1:8090
+
+	file_server
+	log
+}

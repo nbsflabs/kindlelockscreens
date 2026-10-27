@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Make your Kindle lock screen – Kindle Lock Screens</title>
+  <meta name="description" content="Turn a photo or one of our designs into a lock screen for your Kindle.">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#2f5d50">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="canonical" href="https://kindlelockscreens.com/make/">
+  <meta property="og:site_name" content="Kindle Lock Screens">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kindlelockscreens.com/make/">
+  <meta property="og:title" content="Make your Kindle lock screen – Kindle Lock Screens">
+  <meta property="og:description" content="Turn a photo or one of our designs into a lock screen for your Kindle.">
+  <meta property="og:image" content="https://kindlelockscreens.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Kindle Lock Screens: three Kindles showing lock screen designs">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="/fonts/fonts.css">
+  <link rel="stylesheet" href="/styles.css?v=20">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="home" href="/">
+      <img class="logo" src="/icon.svg" alt="" width="28" height="28">
+      <span class="brand">KindleLockScreens<span class="tld">.com</span></span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="/#designs">Designs</a>
+      <a href="/guides/">Guides</a>
+      <a href="/faq/">FAQ</a>
+      <a class="btn primary small" href="/make/">Make yours</a>
+    </nav>
+  </header>
+
+  <main id="main" class="maker">
+    <section class="stage" aria-label="Preview">
+      <div class="device">
+        <div class="screen" id="screen">
+          <canvas id="preview" aria-label="Lock screen preview"></canvas>
+          <button type="button" class="dropzone" id="dropzone">
+            <strong>Upload your photo</strong>
+            <small>JPG, PNG, WebP or iPhone HEIC — or drop it here</small>
+          </button>
+        </div>
+      </div>
+      <p class="hint" id="hint">Drag the photo to reposition it.</p>
+    </section>
+
+    <section class="controls" aria-label="Controls">
+      <h1>Make your Kindle lock screen</h1>
+
+      <label class="field device-field">
+        <span>Your e-reader</span>
+        <select id="device"></select>
+      </label>
+      <p class="fine-print" id="device-note"></p>
+
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" id="tab-photo" aria-selected="true" data-mode="photo">From your photo</button>
+        <button type="button" role="tab" id="tab-template" aria-selected="false" data-mode="template">From a template</button>
+      </div>
+
+      <div class="panel" id="panel-photo" role="tabpanel" aria-labelledby="tab-photo">
+        <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" hidden>
+        <button type="button" class="btn" id="choose">Choose photo</button>
+        <label class="field">
+          <span>Zoom</span>
+          <input type="range" id="zoom" min="1" max="4" step="0.01" value="1" disabled>
+        </label>
+        <p class="error" id="error" role="alert" hidden></p>
+        <div class="fields" id="caption-fields" hidden>
+          <label class="field">
+            <span>Add text <small>(optional)</small></span>
+            <input type="text" id="caption" maxlength="90" placeholder="e.g. If found, please email me@example.com" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Text position</span>
+            <select id="caption-at">
+              <option value="top">Top</option>
+              <option value="middle">Middle</option>
+              <option value="bottom" selected>Bottom</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-template" role="tabpanel" aria-labelledby="tab-template" hidden>
+        <div class="thumbs" id="thumbs"></div>
+        <div class="fields" id="name-fields">
+          <label class="field" id="name-field">
+            <span>Name</span>
+            <input type="text" id="name" maxlength="24" value="Leaf" autocomplete="off">
+          </label>
+          <label class="field" id="line2-field">
+            <span>Second line</span>
+            <input type="text" id="line2" maxlength="24" value="Kindle" autocomplete="off">
+          </label>
+        </div>
+      </div>
+
+      <fieldset class="adjust" id="adjust">
+        <legend>Adjust</legend>
+        <label class="check">
+          <input type="checkbox" id="grayscale" checked>
+          <span>Grayscale <small>(turn off for Colorsoft)</small></span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="eink">
+          <span>E-ink optimise <small>(extra contrast and sharpening)</small></span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="dither">
+          <span>Smooth gradients <small>(dithers to the 16 greys e-ink can show)</small></span>
+        </label>
+        <label class="field">
+          <span>Brightness</span>
+          <input type="range" id="brightness" min="-50" max="50" value="0">
+        </label>
+        <label class="field">
+          <span>Contrast</span>
+          <input type="range" id="contrast" min="-50" max="50" value="0">
+        </label>
+        <button type="button" class="link" id="reset">Reset adjustments</button>
+      </fieldset>
+
+      <div class="actions">
+        <button type="button" class="btn primary" id="download" disabled>Download</button>
+        <button type="button" class="btn" id="pack" hidden>Download every design (ZIP)</button>
+        <p class="error" id="download-message" role="alert" hidden></p>
+        <p class="fine-print">Free, with no sign-up. You get a Kindle file and the image, made right here on your device.</p>
+        <p class="fine-print">On a Kindle it shows as the cover of the book you opened last, so it needs <em>Display Cover</em> and a Kindle without lock screen ads. <a href="/faq/#other-books">What happens when I read another book?</a> Using a Kobo or KOReader? See the <a href="/guides/">setup guides</a>.</p>
+      </div>
+
+      <details class="howto">
+        <summary>How to get it on your Kindle</summary>
+        <ol>
+          <li>Tap <em>Download</em>.</li>
+          <li>Send the file to your Kindle: from a phone or tablet, tap <em>Send to Kindle app</em>; on a computer, download it and use Amazon's Send to Kindle.</li>
+          <li>Open it on your Kindle once so it becomes the current book.</li>
+          <li>Turn on <em>Display Cover</em> in Settings (under Device Options, or Screen and Brightness on newer models).</li>
+        </ol>
+        <p>Display Cover is only available on Kindles without Special Offers (lock screen ads).</p>
+      </details>
+    </section>
+  </main>
+
+  <dialog class="ready" id="ready" aria-labelledby="ready-title">
+    <h2 id="ready-title">Your lock screen is ready</h2>
+    <div class="ready-files">
+      <button type="button" class="btn primary" id="share-kindle" hidden>Send to Kindle app</button>
+      <a class="btn" id="get-epub" download="kindle-lock-screen.epub">Download for Kindle</a>
+      <a class="link" id="get-image" download="kindle-lock-screen.jpg">Download the image (JPEG)</a>
+    </div>
+    <p class="error" id="share-message" role="alert" hidden>The Kindle app couldn’t take the file. Tap <em>Download for Kindle</em> instead, then send it with <a href="https://www.amazon.co.uk/sendtokindle" target="_blank" rel="noopener">Amazon’s Send to Kindle</a>.</p>
+    <ol class="ready-steps" data-guide="kindle">
+      <li id="phone-step">Tap <em>Send to Kindle app</em> and pick the Kindle app from the list.</li>
+      <li id="computer-step">Download the file for Kindle, then send it with <a href="https://www.amazon.co.uk/sendtokindle" target="_blank" rel="noopener">Amazon’s Send to Kindle</a>, on the web or by email. Copying it over a USB cable won’t work: Amazon has to convert it.</li>
+      <li>When it appears in your Kindle library, open it once.</li>
+      <li>Turn on <em>Display Cover</em> in your Kindle’s settings.</li>
+      <li>Opening another book swaps the lock screen for that book’s cover. Open this one again for a moment to bring it back.</li>
+    </ol>
+    <ol class="ready-steps" data-guide="kobo" hidden>
+      <li>Connect your Kobo to a computer with a USB cable.</li>
+      <li>Open the Kobo drive and show hidden folders. Inside the <code>.kobo</code> folder, make a folder called <code>screensaver</code> (if it isn’t there already).</li>
+      <li>Copy the image into <code>.kobo/screensaver</code>, then eject the Kobo.</li>
+      <li>On the Kobo, open <em>Settings → Energy saving and privacy</em> and turn on both <em>Show current read</em> and <em>Show book covers full screen</em>. Your image appears next time it sleeps.</li>
+    </ol>
+    <ol class="ready-steps" data-guide="koreader" hidden>
+      <li>Copy the image onto your reader, for example into a <code>screensavers</code> folder.</li>
+      <li>In KOReader, open the menu, then <em>Settings → Screen → Sleep screen → Wallpaper</em>, and choose <em>Show custom image</em> (or <em>random image from folder</em>) and pick it.</li>
+      <li>On a jailbroken Kindle using a screensaver hack instead, copy it into that hack’s screensavers folder.</li>
+    </ol>
+    <p class="fine-print"><a href="/guides/">Step-by-step setup guides</a></p>
+    <button type="button" class="btn" id="ready-close">Make another</button>
+  </dialog>
+
+  <footer class="foot">
+    <nav aria-label="Footer">
+      <a href="/make/">Lock screen maker</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/guides/">Setup guides</a>
+      <a href="https://github.com/nbsflabs/kindlelockscreens">Open source on GitHub</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/terms/">Terms</a>
+    </nav>
+    <p>Kindle is a trademark of Amazon.com, Inc. or its affiliates. Kindle Lock Screens is an independent product and is not affiliated with or endorsed by Amazon.</p>
+    <div class="counter" hidden>
+      <div class="counter-item"><span class="counter-label">Visitors</span><span class="odometer" data-count="visits"></span></div>
+      <div class="counter-item"><span class="counter-label">Lock screens made</span><span class="odometer" data-count="made"></span></div>
+    </div>
+  </footer>
+  <script type="module" src="/src/counter.js?v=20"></script>
+  <script type="module" src="/src/app.js?v=20"></script>
+</body>
+</html>
