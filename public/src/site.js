@@ -1,6 +1,6 @@
 // Small touches on every page: the email address (put together here, so bots reading the
 // page source don't find it) and Christmas lights (along the top of the page) plus anything marked data-season="<id>".
-import { seasonOn } from './catalog.js?v=21';
+import { seasonOn } from './catalog.js?v=23';
 
 const address = ['hello', 'kindlelockscreens.com'].join('@');
 const SUBJECTS = { idea: 'An idea for Kindle Lock Screens' };

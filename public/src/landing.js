@@ -1,5 +1,5 @@
-import { FONTS, H, W } from './templates.js?v=21';
-import { loadCatalogue } from './catalog.js?v=21';
+import { FONTS, H, W } from './templates.js?v=23';
+import { loadCatalogue } from './catalog.js?v=23';
 
 const SAMPLE = { name: 'Leaf', line2: 'Kindle', books: '24', favourite: '' };
 const { templates: available } = loadCatalogue();

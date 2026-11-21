@@ -1,6 +1,6 @@
 // Gentle snow on the home page over Christmas (the Christmas season's dates), with a button to turn it off (remembered on
 // this device). Nothing falls for anyone who has asked their device for less motion.
-import { seasonOn } from './catalog.js?v=21';
+import { seasonOn } from './catalog.js?v=23';
 
 const KEY = 'kls-snow-off';
 
@@ -45,7 +45,9 @@ if (seasonOn('christmas') && !matchMedia('(prefers-reduced-motion: reduce)').mat
   function set(on) {
     running = on && !document.hidden;
     canvas.hidden = !on;
-    button.textContent = on ? 'Snow: on' : 'Snow: off';
+    button.textContent = '❄';
+    button.setAttribute('aria-label', on ? 'Turn the snow off' : 'Turn the snow on');
+    button.title = button.getAttribute('aria-label');
     button.setAttribute('aria-pressed', String(on));
     if (running) requestAnimationFrame(frame);
   }

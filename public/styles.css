@@ -272,10 +272,6 @@ a.btn { display: inline-block; text-align: center; text-decoration: none; }
 /* Christmas 2026 update: confetti, snow, Surprise me, the ready-box extras and the idea banner. */
 .confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 5; }
 .snow { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 20; }
-.snow-toggle {
-  position: fixed; right: 12px; bottom: 12px; z-index: 21; padding: 6px 12px; border: 1px solid var(--line);
-  border-radius: 999px; background: var(--panel); color: var(--muted); font: inherit; font-size: 13px; cursor: pointer;
-}
 .design-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
 .ink-switch { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--panel); }
 .ink-switch button { border: 0; border-radius: 999px; padding: 7px 14px; background: none; color: var(--muted); font: inherit; font-size: 15px; cursor: pointer; }
@@ -284,8 +280,8 @@ a.btn { display: inline-block; text-align: center; text-decoration: none; }
 .ready-count { color: var(--ink) !important; }
 .ready-idea { font-size: 14px; }
 .idea-banner {
-  margin: 0; padding: 8px 16px; text-align: center; font-size: 14px;
-  background: #e7efe9; color: var(--ink); border-bottom: 1px solid var(--line);
+  margin: 0; padding: 18px 16px; text-align: center; font-size: 15px;
+  background: #e7efe9; color: var(--ink); border-top: 1px solid var(--line);
 }
 .season-pill {
   display: inline-block; margin-bottom: 14px; padding: 6px 14px; border-radius: 999px;
@@ -306,8 +302,11 @@ a.btn { display: inline-block; text-align: center; text-decoration: none; }
 .lights li:nth-child(even) { transform: rotate(-8deg); }
 @keyframes twinkle { 50% { opacity: 0.45; } }
 @media (prefers-reduced-motion: reduce) { .lights li { animation: none; } }
-.jingle-toggle {
-  position: fixed; left: 12px; bottom: 12px; z-index: 21; padding: 6px 12px; border: 1px solid var(--line);
-  border-radius: 999px; background: var(--panel); color: var(--muted); font: inherit; font-size: 13px; cursor: pointer;
+/* Snow and jingle: two small round buttons side by side in the corner. */
+.snow-toggle, .jingle-toggle {
+  position: fixed; bottom: 12px; z-index: 21; width: 40px; height: 40px; padding: 0; border: 1px solid var(--line);
+  border-radius: 50%; background: var(--panel); color: var(--muted); font: inherit; font-size: 18px; line-height: 1; cursor: pointer;
 }
-.jingle-toggle[aria-pressed="true"] { background: #b8433a; border-color: #b8433a; color: #fff; }
+.snow-toggle { right: 12px; }
+.jingle-toggle { right: 60px; }
+.snow-toggle[aria-pressed="true"], .jingle-toggle[aria-pressed="true"] { color: #b8433a; border-color: #b8433a; }

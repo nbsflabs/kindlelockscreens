@@ -1,6 +1,6 @@
 // A ♪ button that plays Jingle Bells (the tune is public domain) with little synthesised
 // bells, only after a tap, looping until tapped again. Christmas season only.
-import { seasonOn } from './catalog.js?v=21';
+import { seasonOn } from './catalog.js?v=23';
 
 const NOTE = { C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, C6: 1046.5, G4: 392.0 };
 // [note, beats]; null is a rest.
@@ -64,7 +64,9 @@ function playOnce() {
 if (seasonOn('christmas')) {
   const button = Object.assign(document.createElement('button'), { type: 'button', className: 'jingle-toggle' });
   const label = (on) => {
-    button.textContent = on ? '♪ Stop the jingle' : '♪ Play a jingle';
+    button.textContent = '♪';
+    button.setAttribute('aria-label', on ? 'Stop the jingle' : 'Play a jingle');
+    button.title = button.getAttribute('aria-label');
     button.setAttribute('aria-pressed', String(on));
   };
   label(false);

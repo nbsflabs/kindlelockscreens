@@ -1,7 +1,7 @@
 // A little burst of books and stars when a lock screen is made (snowflakes at Christmas).
 // Drawn on a canvas inside the "ready" dialog, so it shows above the page; skipped for anyone
 // who has asked their device for less motion.
-import { seasonOn } from './catalog.js?v=21';
+import { seasonOn } from './catalog.js?v=23';
 
 const COLOURS = ['#2f5d50', '#d4a64a', '#b8433a', '#16181d', '#8fb3a7'];
 

@@ -2,7 +2,7 @@
 // through its `season` in templates.js and only appears between that season's dates. Every
 // design ends up with the same shape: id, label, draw(), and `fields` saying which of the two
 // text fields it uses.
-import { TEMPLATES } from './templates.js?v=21';
+import { TEMPLATES } from './templates.js?v=23';
 
 // starts/ends are MM-DD and repeat every year; a window may wrap the new year.
 export const SEASONS = [

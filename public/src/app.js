@@ -1,8 +1,8 @@
-import { FONTS, H, TEMPLATES, W } from './templates.js?v=21';
-import { loadCatalogue } from './catalog.js?v=21';
-import { DEFAULT_FILTERS, applyFilters } from './filters.js?v=21';
-import { buildEpub, zipStore } from './epub.js?v=21';
-import { DEVICES, saveDevice, savedDevice } from './devices.js?v=21';
+import { FONTS, H, TEMPLATES, W } from './templates.js?v=23';
+import { loadCatalogue } from './catalog.js?v=23';
+import { DEFAULT_FILTERS, applyFilters } from './filters.js?v=23';
+import { buildEpub, zipStore } from './epub.js?v=23';
+import { DEVICES, saveDevice, savedDevice } from './devices.js?v=23';
 
 const catalogue = loadCatalogue();
 const AVAILABLE = catalogue.templates.length ? catalogue.templates : [{ ...TEMPLATES[0], fields: { name: true, line2: true } }];

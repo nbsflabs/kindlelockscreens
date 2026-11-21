@@ -106,3 +106,12 @@ h1, h2 { font-family: "Playfair Display", Georgia, serif; line-height: 1.15; }
   .hero-art .device { width: 128px; padding: 8px 8px 20px; border-radius: 12px; }
   .hero-art .front { width: 150px; }
 }
+
+/* Phones: fewer things competing at the top of the home page. */
+@media (max-width: 600px) {
+  .badges { gap: 0; justify-content: center; }
+  .badges li { padding: 0; border: 0; border-radius: 0; color: var(--muted); font-weight: 500; }
+  .badges li + li::before { content: "·"; margin: 0 8px; }
+  .badges li:last-child { display: none; }
+  .cta-row a[href="#how"] { display: none; }
+}
