@@ -269,9 +269,8 @@ a.btn { display: inline-block; text-align: center; text-decoration: none; }
 .odometer span:last-child { background: linear-gradient(#e9e9e9 0%, #fff 48%, #d6d6d6 52%, #e9e9e9 100%); color: #111; text-shadow: none; }
 .made-count { margin: 0 0 10px; color: var(--accent); font-weight: 600; }
 
-/* Christmas 2026 update: confetti, snow, Surprise me, the ready-box extras and the idea banner. */
+/* Christmas 2026 update: confetti, Surprise me, the ready-box extras and the idea banner. */
 .confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 5; }
-.snow { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 20; }
 .design-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
 .ink-switch { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--panel); }
 .ink-switch button { border: 0; border-radius: 999px; padding: 7px 14px; background: none; color: var(--muted); font: inherit; font-size: 15px; cursor: pointer; }
@@ -302,11 +301,3 @@ a.btn { display: inline-block; text-align: center; text-decoration: none; }
 .lights li:nth-child(even) { transform: rotate(-8deg); }
 @keyframes twinkle { 50% { opacity: 0.45; } }
 @media (prefers-reduced-motion: reduce) { .lights li { animation: none; } }
-/* Snow and jingle: two small round buttons side by side in the corner. */
-.snow-toggle, .jingle-toggle {
-  position: fixed; bottom: 12px; z-index: 21; width: 40px; height: 40px; padding: 0; border: 1px solid var(--line);
-  border-radius: 50%; background: var(--panel); color: var(--muted); font: inherit; font-size: 18px; line-height: 1; cursor: pointer;
-}
-.snow-toggle { right: 12px; }
-.jingle-toggle { right: 60px; }
-.snow-toggle[aria-pressed="true"], .jingle-toggle[aria-pressed="true"] { color: #b8433a; border-color: #b8433a; }
