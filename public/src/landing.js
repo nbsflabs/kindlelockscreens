@@ -1,7 +1,7 @@
-import { FONTS, H, W } from './templates.js?v=20';
-import { loadCatalogue } from './catalog.js?v=20';
+import { FONTS, H, W } from './templates.js?v=21';
+import { loadCatalogue } from './catalog.js?v=21';
 
-const SAMPLE = { name: 'Leaf', line2: 'Kindle' };
+const SAMPLE = { name: 'Leaf', line2: 'Kindle', books: '24', favourite: '' };
 const { templates: available } = loadCatalogue();
 
 function draw(canvas, scale) {

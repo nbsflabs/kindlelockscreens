@@ -1,8 +1,8 @@
-import { FONTS, H, TEMPLATES, W } from './templates.js?v=20';
-import { loadCatalogue } from './catalog.js?v=20';
-import { DEFAULT_FILTERS, applyFilters } from './filters.js?v=20';
-import { buildEpub, zipStore } from './epub.js?v=20';
-import { DEVICES, saveDevice, savedDevice } from './devices.js?v=20';
+import { FONTS, H, TEMPLATES, W } from './templates.js?v=21';
+import { loadCatalogue } from './catalog.js?v=21';
+import { DEFAULT_FILTERS, applyFilters } from './filters.js?v=21';
+import { buildEpub, zipStore } from './epub.js?v=21';
+import { DEVICES, saveDevice, savedDevice } from './devices.js?v=21';
 
 const catalogue = loadCatalogue();
 const AVAILABLE = catalogue.templates.length ? catalogue.templates : [{ ...TEMPLATES[0], fields: { name: true, line2: true } }];
@@ -23,6 +23,8 @@ const state = {
   template: AVAILABLE[0].id,
   name: 'Leaf',
   line2: 'Kindle',
+  books: '24',
+  favourite: '',
   filters: { ...DEFAULT_FILTERS },
   device: savedDevice(),
   caption: '',
@@ -104,12 +106,17 @@ function fit(width, height) {
   return { scale, dx: (width - W * scale) / 2, dy: (height - H * scale) / 2 };
 }
 
-function draw(ctx, template) {
-  if (template) template.draw(ctx, state);
+// A design with a colour version (inColour) draws it whenever black and white is off.
+function paint(ctx, template, grayscale = state.filters.grayscale) {
+  (template.inColour && !grayscale ? template.inColour : template.draw)(ctx, state);
+}
+
+function draw(ctx, template, grayscale) {
+  if (template) paint(ctx, template, grayscale);
   else if (state.mode === 'photo') {
     drawPhoto(ctx);
     drawCaption(ctx);
-  } else currentTemplate().draw(ctx, state);
+  } else paint(ctx, currentTemplate(), grayscale);
 }
 
 function render(canvas, width, height, { template, filters = state.filters } = {}) {
@@ -118,7 +125,7 @@ function render(canvas, width, height, { template, filters = state.filters } = {
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   const { scale, dx, dy } = fit(width, height);
   ctx.setTransform(scale, 0, 0, scale, dx, dy);
-  draw(ctx, template);
+  draw(ctx, template, filters.grayscale);
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   applyFilters(ctx, width, height, filters);
 }
@@ -140,7 +147,7 @@ function renderThumb(canvas, id) {
   canvas.height = Math.round(H * THUMB_SCALE);
   const ctx = canvas.getContext('2d');
   ctx.setTransform(THUMB_SCALE, 0, 0, THUMB_SCALE, 0, 0);
-  AVAILABLE.find((t) => t.id === id).draw(ctx, state);
+  paint(ctx, AVAILABLE.find((t) => t.id === id));
 }
 
 // ---------- UI state ----------
@@ -161,8 +168,7 @@ function refresh() {
   $('pack').hidden = device.method !== 'image';
   $('pack').disabled = !ready;
   const { fields } = currentTemplate();
-  $('name-field').hidden = !fields.name;
-  $('line2-field').hidden = !fields.line2;
+  for (const key of ['name', 'line2', 'books', 'favourite']) $(`${key}-field`).hidden = !fields[key];
   dropzone.hidden = !isPhoto || hasPhoto;
   screen.classList.toggle('pannable', isPhoto && hasPhoto);
   // With a photo loaded the preview can be focused and moved from the keyboard.
@@ -438,7 +444,7 @@ for (const [heading, belongs] of GROUPS) {
   $('thumbs').append(label, group);
 }
 
-for (const key of ['name', 'line2']) {
+for (const key of ['name', 'line2', 'books', 'favourite']) {
   $(key).addEventListener('input', (event) => {
     state[key] = event.target.value;
     refreshThumbs();
@@ -448,26 +454,44 @@ for (const key of ['name', 'line2']) {
 
 function syncFilterInputs() {
   $('grayscale').checked = state.filters.grayscale;
+  $('ink-mono').setAttribute('aria-pressed', String(state.filters.grayscale));
+  $('ink-colour').setAttribute('aria-pressed', String(!state.filters.grayscale));
   $('eink').checked = state.filters.eink;
   $('dither').checked = state.filters.dither;
   $('brightness').value = String(state.filters.brightness);
   $('contrast').value = String(state.filters.contrast);
 }
-// Colour designs are for the Kindle Colorsoft, so picking one turns black and white off;
-// going back to a black-and-white design turns it on again.
+// Colour is for the Kindle Colorsoft. A colour-only design turns black and white off; going
+// from one to a design that has no colour version turns it back on. Designs with a colour
+// version just follow the Black & white / Colour switch.
 function chooseTemplate(id) {
-  const wasColour = Boolean(currentTemplate().colour);
+  const wasColourOnly = Boolean(currentTemplate().colour);
   state.template = id;
-  const isColour = Boolean(currentTemplate().colour);
-  if (isColour !== wasColour) {
-    state.filters.grayscale = !isColour;
+  const next = currentTemplate();
+  const grayscale = next.colour ? false : wasColourOnly && !next.inColour ? true : state.filters.grayscale;
+  if (grayscale !== state.filters.grayscale) {
+    state.filters.grayscale = grayscale;
     syncFilterInputs();
+    refreshThumbs();
   }
 }
+
+function setColour(on) {
+  state.filters.grayscale = !on;
+  syncFilterInputs();
+  refreshThumbs();
+  schedule();
+}
+$('ink-mono').addEventListener('click', () => setColour(false));
+$('ink-colour').addEventListener('click', () => setColour(true));
 
 for (const key of ['grayscale', 'eink', 'dither']) {
   $(key).addEventListener('change', (event) => {
     state.filters[key] = event.target.checked;
+    if (key === 'grayscale') {
+      syncFilterInputs();
+      refreshThumbs();
+    }
     schedule();
   });
 }
@@ -630,11 +654,23 @@ $('pack').addEventListener('click', async () => {
   }
 });
 
+// Picks any design other than the one showing, for anyone who can't decide.
+function surprise() {
+  const others = AVAILABLE.filter((t) => t.id !== state.template);
+  state.mode = 'template';
+  chooseTemplate(others[Math.floor(Math.random() * others.length)].id);
+}
+$('surprise').addEventListener('click', () => {
+  surprise();
+  refresh();
+});
+
 // ---------- Start ----------
 
 // The landing page links here with ?design=<template id>.
 const requested = new URLSearchParams(location.search).get('design');
-if (AVAILABLE.some((t) => t.id === requested)) {
+if (requested === 'surprise') surprise();
+else if (AVAILABLE.some((t) => t.id === requested)) {
   state.mode = 'template';
   chooseTemplate(requested);
 }

@@ -22,7 +22,7 @@
   <meta property="og:image:alt" content="Kindle Lock Screens: three Kindles showing lock screen designs">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="/fonts/fonts.css">
-  <link rel="stylesheet" href="/styles.css?v=20">
+  <link rel="stylesheet" href="/styles.css?v=21">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -92,6 +92,14 @@
       </div>
 
       <div class="panel" id="panel-template" role="tabpanel" aria-labelledby="tab-template" hidden>
+        <div class="design-bar">
+          <div class="ink-switch" role="group" aria-label="Design colours">
+            <button type="button" id="ink-mono" aria-pressed="true">Black &amp; white</button>
+            <button type="button" id="ink-colour" aria-pressed="false">Colour</button>
+          </div>
+          <button type="button" class="btn small" id="surprise">Surprise me</button>
+        </div>
+        <p class="ink-note">Colour is for the Kindle Colorsoft. Other Kindles show it in greys.</p>
         <div class="thumbs" id="thumbs"></div>
         <div class="fields" id="name-fields">
           <label class="field" id="name-field">
@@ -101,6 +109,14 @@
           <label class="field" id="line2-field">
             <span>Second line</span>
             <input type="text" id="line2" maxlength="24" value="Kindle" autocomplete="off">
+          </label>
+          <label class="field" id="books-field" hidden>
+            <span>Books read this year</span>
+            <input type="text" id="books" maxlength="4" value="24" inputmode="numeric" autocomplete="off">
+          </label>
+          <label class="field" id="favourite-field" hidden>
+            <span>Favourite book</span>
+            <input type="text" id="favourite" maxlength="40" placeholder="The one you couldn’t put down" autocomplete="off">
           </label>
         </div>
       </div>
@@ -153,6 +169,7 @@
 
   <dialog class="ready" id="ready" aria-labelledby="ready-title">
     <h2 id="ready-title">Your lock screen is ready</h2>
+    <p class="ready-count" data-count-min="1" hidden>That’s lock screen number <strong data-count="made"></strong> made here. Thank you!</p>
     <div class="ready-files">
       <button type="button" class="btn primary" id="share-kindle" hidden>Send to Kindle app</button>
       <a class="btn" id="get-epub" download="kindle-lock-screen.epub">Download for Kindle</a>
@@ -178,6 +195,7 @@
       <li>On a jailbroken Kindle using a screensaver hack instead, copy it into that hack’s screensavers folder.</li>
     </ol>
     <p class="fine-print"><a href="/guides/">Step-by-step setup guides</a></p>
+    <p class="ready-idea">Got an idea, or a design you’d love to see? <a href="/faq/" data-mail="idea">Tell us</a>, we read every one.</p>
     <button type="button" class="btn" id="ready-close">Make another</button>
   </dialog>
 
@@ -196,7 +214,9 @@
       <div class="counter-item"><span class="counter-label">Lock screens made</span><span class="odometer" data-count="made"></span></div>
     </div>
   </footer>
-  <script type="module" src="/src/counter.js?v=20"></script>
-  <script type="module" src="/src/app.js?v=20"></script>
+  <script type="module" src="/src/counter.js?v=21"></script>
+  <script type="module" src="/src/site.js?v=21"></script>
+  <script type="module" src="/src/app.js?v=21"></script>
+  <script type="module" src="/src/confetti.js?v=21"></script>
 </body>
 </html>

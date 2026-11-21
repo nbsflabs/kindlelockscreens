@@ -453,17 +453,22 @@ function autumnBadge(ctx) {
   type(ctx,'AUTUMN',1000,110,'"Bebas Neue"',900,'400');
   type(ctx,'COOL AIR / WARM STORIES',1350,36);lozenge(ctx,632,1480,24);
 }
-function bookTree(ctx) {
-  printGround(ctx,true);frame(ctx);
-  lozenge(ctx,632,310,64);
-  for(let i=0;i<9;i++) {
-    const w=170+i*85,y=420+i*96;
-    ctx.fillStyle=i%3===0?'#a0a0a0':'#ffffff';ctx.fillRect(632-w/2,y,w,70);
-    ctx.fillStyle='#181818';ctx.fillRect(662-w/2,y,12,70);
+const TREE_GREY = { ground: '#181818', line: '#ffffff', books: ['#a0a0a0', '#ffffff', '#ffffff'], spine: '#181818', star: '#ffffff', trunk: '#ffffff', text: '#ffffff' };
+const TREE_COLOUR = { ground: '#2c4a3d', line: '#eee9d8', books: ['#b8433a', '#eee9d8', '#d9b45a'], spine: '#2c4a3d', star: '#e8c25a', trunk: '#8a6a52', text: '#eee9d8' };
+function bookTree(ctx, data, pal = TREE_GREY) {
+  printGround(ctx, true); ctx.fillStyle = pal.ground; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = pal.line; frame(ctx);
+  ctx.fillStyle = pal.star; lozenge(ctx, 632, 310, 64);
+  for (let i = 0; i < 9; i++) {
+    const w = 170 + i * 85, y = 420 + i * 96;
+    ctx.fillStyle = pal.books[i % 3]; ctx.fillRect(632 - w / 2, y, w, 70);
+    ctx.fillStyle = pal.spine; ctx.fillRect(662 - w / 2, y, 12, 70);
   }
-  ctx.fillStyle='#ffffff';ctx.fillRect(600,1280,64,70);
-  type(ctx,'ALL BOOKED UP',1460,86,'"Bebas Neue"',960,'400');type(ctx,'FOR CHRISTMAS',1540,33);
+  ctx.fillStyle = pal.trunk; ctx.fillRect(600, 1280, 64, 70);
+  ctx.fillStyle = pal.text;
+  type(ctx, 'ALL BOOKED UP', 1460, 86, '"Bebas Neue"', 960, '400'); type(ctx, 'FOR CHRISTMAS', 1540, 33);
 }
+
 function resolutions(ctx,data) {
   printGround(ctx);frame(ctx);ctx.textAlign='left';
   type(ctx,'A NEW CHAPTER',240,86,'"Bebas Neue"',960,'400',160);
@@ -526,6 +531,221 @@ function patchworkColour(ctx) {
   }
   ctx.fillStyle=SOFT[0];type(ctx,'PIECES OF A QUIET DAY',1560,54,'"Bebas Neue"',1000,'400');
 }
+// ---------- Christmas, by the fire ----------
+function flame(ctx, x, y, h, w) {
+  ctx.beginPath(); ctx.moveTo(x, y - h);
+  ctx.quadraticCurveTo(x + w, y - h * 0.35, x, y);
+  ctx.quadraticCurveTo(x - w, y - h * 0.35, x, y - h); ctx.fill();
+}
+function stocking(ctx, x, y, flip, fill) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(flip * 0.8, 0.8);
+  ctx.beginPath(); ctx.moveTo(-40, 0); ctx.lineTo(40, 0); ctx.lineTo(40, 120);
+  ctx.bezierCurveTo(40, 140, 130, 135, 130, 180); ctx.bezierCurveTo(130, 225, 60, 225, 20, 215);
+  ctx.bezierCurveTo(-30, 205, -40, 180, -40, 150); ctx.closePath();
+  ctx.fillStyle = fill; ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(-50, -6, 100, 46); ctx.strokeRect(-50, -6, 100, 46);
+  ctx.restore();
+}
+function bookStack(ctx, x, y, books) {
+  // books: [width, height, fill] from the bottom up, each centred on x.
+  for (const [w, h, fill] of books) {
+    y -= h; ctx.fillStyle = fill; ctx.fillRect(x - w / 2, y, w, h); ctx.strokeRect(x - w / 2, y, w, h);
+    ctx.fillStyle = fill === '#181818' ? '#ffffff' : '#181818'; ctx.fillRect(x - w / 2 + 18, y + h / 2 - 4, w - 36, 8);
+  }
+  return y;
+}
+function mug(ctx, x, y, s) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  ctx.beginPath(); ctx.arc(70, -70, 34, -Math.PI / 2, Math.PI / 2); ctx.stroke();
+  roundRect(ctx, -70, -130, 140, 130, 18); fillStroke(ctx, '#ffffff');
+  for (const dx of [-30, 10]) printPath(ctx, [[dx, -160], [dx + 14, -185], [dx, -210], [dx + 14, -235]]);
+  ctx.restore();
+}
+const FIRE_GREY = { ground: '#ffffff', dark: '#181818', flame: '#ffffff', core: '#181818', candleFlame: '#181818', log: '#a0a0a0', candle: '#ffffff', left: '#a0a0a0', right: '#ffffff', books: ['#ffffff', '#a0a0a0', '#181818', '#ffffff'] };
+const FIRE_COLOUR = { ground: '#eee9d8', dark: '#4a3328', flame: '#e3a84a', core: '#b8433a', candleFlame: '#e3a84a', log: '#8a6a52', candle: '#f4efe0', left: '#b8433a', right: '#4f6f5f', books: ['#4f6f5f', '#c5bd96', '#a85a4a', '#eee9d8'] };
+function fireside(ctx, data, pal = FIRE_GREY) {
+  printGround(ctx); ctx.fillStyle = pal.ground; ctx.fillRect(0, 0, W, H); ctx.strokeStyle = pal.dark; frame(ctx);
+  ctx.fillStyle = pal.dark; ctx.fillRect(200, 560, 864, 56);
+  ctx.lineWidth = 12; ctx.strokeRect(262, 616, 740, 620);
+  ctx.fillRect(220, 1236, 824, 44);
+  ctx.beginPath(); ctx.moveTo(442, 1236); ctx.lineTo(442, 900); ctx.arc(632, 900, 190, Math.PI, 0);
+  ctx.lineTo(822, 1236); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = pal.flame; flame(ctx, 632, 1160, 300, 120); flame(ctx, 548, 1170, 190, 70); flame(ctx, 716, 1170, 210, 75);
+  ctx.fillStyle = pal.core; flame(ctx, 632, 1160, 130, 45);
+  ctx.fillStyle = pal.log; ctx.lineWidth = 7;
+  roundRect(ctx, 482, 1160, 300, 48, 24); ctx.fill(); ctx.stroke();
+  ctx.save(); ctx.translate(632, 1190); ctx.rotate(-0.12); roundRect(ctx, -170, -20, 340, 44, 22); ctx.fill(); ctx.stroke(); ctx.restore();
+  bookStack(ctx, 380, 560, [[210, 56, pal.books[0]], [180, 50, pal.books[1]], [196, 46, pal.books[2]], [160, 44, pal.books[3]]]);
+  ctx.fillStyle = pal.candle; ctx.fillRect(862, 410, 50, 150); ctx.strokeRect(862, 410, 50, 150);
+  ctx.fillStyle = pal.candleFlame; flame(ctx, 887, 396, 70, 24);
+  ctx.lineWidth = 7; stocking(ctx, 340, 616, 1, pal.left); stocking(ctx, 924, 616, -1, pal.right);
+  ctx.fillStyle = pal.dark;
+  type(ctx, 'STAY IN. READ ON.', 1420, 120, '"Bebas Neue"', 960, '400');
+  type(ctx, 'A FIRESIDE CHRISTMAS', 1500, 32);
+}
+const SNOW_GREY = { ground: '#181818', sky: '#4a4a4a', books: ['#ffffff', '#a0a0a0', '#ffffff', '#a0a0a0'] };
+const SNOW_COLOUR = { ground: '#2a3442', sky: '#4d6278', books: ['#a85a4a', '#c5bd96', '#4f6f5f', '#eee9d8'] };
+function snowyWindow(ctx, data, pal = SNOW_GREY) {
+  printGround(ctx, true); ctx.fillStyle = pal.ground; ctx.fillRect(0, 0, W, H); ctx.strokeStyle = '#ffffff'; frame(ctx);
+  const random = seeded(12);
+  ctx.fillStyle = pal.sky; ctx.fillRect(250, 220, 764, 760);
+  ctx.fillStyle = '#ffffff';
+  for (let i = 0; i < 90; i++) printDisc(ctx, 265 + random() * 734, 235 + random() * 700, 4 + random() * 9);
+  for (const x of [250, 632]) {
+    ctx.beginPath(); ctx.moveTo(x, 980); ctx.quadraticCurveTo(x + 191, 900, x + 382, 980); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x, 600); ctx.quadraticCurveTo(x + 191, 560, x + 382, 600); ctx.fill();
+  }
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 24; ctx.strokeRect(250, 220, 764, 760);
+  ctx.lineWidth = 16; printPath(ctx, [[632, 220], [632, 980]]); printPath(ctx, [[250, 600], [1014, 600]]);
+  ctx.fillRect(190, 980, 884, 56);
+  ctx.strokeStyle = '#181818'; ctx.lineWidth = 7;
+  bookStack(ctx, 430, 980, [[260, 60, pal.books[0]], [220, 52, pal.books[1]], [240, 50, pal.books[2]], [190, 46, pal.books[3]]]);
+  ctx.strokeStyle = '#181818'; mug(ctx, 800, 980, 1.3);
+  ctx.fillStyle = '#ffffff';
+  type(ctx, 'LET IT SNOW', 1300, 170, '"Bebas Neue"', 960, '400');
+  type(ctx, 'I’VE GOT BOOKS', 1420, 64, '"Bebas Neue"', 960, '400');
+  lozenge(ctx, 632, 1520, 20);
+}
+const COCOA_GREY = { ground: '#ffffff', ink: '#181818', mug: '#ffffff', band: '#181818', pattern: '#ffffff', cocoa: '#181818', mallow: '#ffffff', books: ['#a0a0a0', '#ffffff'] };
+const COCOA_COLOUR = { ground: '#eee9d8', ink: '#4a3328', mug: '#b8433a', band: '#eee9d8', pattern: '#4f6f5f', cocoa: '#5a3a2a', mallow: '#f7f3ea', books: ['#4f6f5f', '#d9b45a'] };
+function cocoaChapters(ctx, data, pal = COCOA_GREY) {
+  printGround(ctx); ctx.fillStyle = pal.ground; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = pal.ink; frame(ctx);
+  ctx.lineWidth = 12;
+  ctx.fillStyle = pal.books[0]; ctx.fillRect(300, 1150, 664, 80); ctx.strokeRect(300, 1150, 664, 80);
+  ctx.fillStyle = pal.books[1]; ctx.fillRect(340, 1230, 600, 76); ctx.strokeRect(340, 1230, 600, 76);
+  ctx.fillStyle = pal.ink; ctx.fillRect(360, 1186, 540, 10); ctx.fillRect(400, 1264, 480, 10);
+  ctx.lineWidth = 34; ctx.beginPath(); ctx.arc(820, 900, 120, -Math.PI / 2, Math.PI / 2); ctx.stroke();
+  ctx.lineWidth = 12; roundRect(ctx, 400, 660, 420, 490, 44); fillStroke(ctx, pal.mug);
+  ctx.fillStyle = pal.cocoa; ctx.beginPath(); ctx.ellipse(610, 668, 204, 30, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = pal.mallow; ctx.lineWidth = 7;
+  for (const [x, r] of [[540, 0.3], [620, -0.2], [690, 0.5]]) {
+    ctx.save(); ctx.translate(x, 648); ctx.rotate(r); ctx.fillRect(-28, -28, 56, 56); ctx.strokeRect(-28, -28, 56, 56); ctx.restore();
+  }
+  ctx.fillStyle = pal.band; ctx.fillRect(406, 880, 408, 110);
+  ctx.fillStyle = pal.pattern; for (let i = 0; i < 5; i++) lozenge(ctx, 460 + i * 75, 935, 26);
+  ctx.lineWidth = 12;
+  for (const x of [520, 610, 700]) {
+    ctx.beginPath(); ctx.moveTo(x, 590);
+    ctx.bezierCurveTo(x - 50, 530, x + 50, 480, x, 420); ctx.bezierCurveTo(x - 40, 370, x + 30, 330, x, 290); ctx.stroke();
+  }
+  ctx.fillStyle = pal.ink;
+  type(ctx, 'COCOA & CHAPTERS', 1450, 120, '"Bebas Neue"', 960, '400');
+  type(ctx, 'WARM HANDS / GOOD BOOK', 1530, 32);
+}
+
+const SANTA_GREY = { ground: '#181818', paper: '#ffffff', rule: '#a0a0a0', ink: '#181818', seal: '#181818', text: '#ffffff' };
+const SANTA_COLOUR = { ground: '#9e3a33', paper: '#f4efe0', rule: '#d9c9a8', ink: '#3a2a22', seal: '#4f6f5f', text: '#f4efe0' };
+function dearSanta(ctx, data, pal = SANTA_GREY) {
+  printGround(ctx, true); ctx.fillStyle = pal.ground; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = pal.text; frame(ctx);
+  ctx.save(); ctx.translate(632, 800); ctx.rotate(-0.04);
+  ctx.fillStyle = pal.paper; ctx.fillRect(-420, -560, 840, 1120);
+  ctx.strokeStyle = pal.rule; ctx.lineWidth = 4;
+  for (let y = -380; y < 520; y += 110) printPath(ctx, [[-350, y + 20], [350, y + 20]]);
+  ctx.fillStyle = pal.ink; ctx.textAlign = 'left';
+  const lines = ['Dear Santa,', 'I have been very good', 'this year (mostly).', 'Please may I have', 'MORE BOOKS?', 'Love,'];
+  lines.forEach((line, i) => type(ctx, line, -380 + i * 110, i === 4 ? 104 : 80, '"Caveat"', 700, '700', -340));
+  type(ctx, ownerText(data.name), 300, 110, '"Caveat"', 640, '700', -260);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = pal.seal; ctx.save(); ctx.translate(270, 430); ctx.rotate(0.3); lozenge(ctx, 0, 0, 46); ctx.restore();
+  ctx.restore();
+  ctx.fillStyle = pal.text; type(ctx, 'P.S. I WILL READ THEM ALL', 1500, 34);
+}
+
+const FLOOD_GREY = { ground: '#181818', line: '#ffffff', books: ['#a0a0a0', '#ffffff', '#ffffff', '#ffffff'], spine: '#181818', band: '#181818', text: '#ffffff' };
+const FLOOD_COLOUR = { ground: '#26303d', line: '#eee9d8', books: ['#b8433a', '#eee9d8', '#d9b45a', '#4f6f5f'], spine: '#26303d', band: '#1b222c', text: '#e8c25a' };
+function bookFlood(ctx, data, pal = FLOOD_GREY) {
+  printGround(ctx, true); ctx.fillStyle = pal.ground; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = pal.line; frame(ctx);
+  const random = seeded(24);
+  ctx.strokeStyle = pal.spine; ctx.lineWidth = 7;
+  for (let i = 0; i < 26; i++) {
+    const x = 180 + random() * 904, y = 200 + i * 38 + random() * 60;
+    const w = 90 + random() * 70, h = w * 1.4;
+    ctx.save(); ctx.translate(x, y); ctx.rotate((random() - 0.5) * 1.6);
+    ctx.fillStyle = pal.books[i % 4]; ctx.fillRect(-w / 2, -h / 2, w, h); ctx.strokeRect(-w / 2, -h / 2, w, h);
+    ctx.fillStyle = pal.spine; ctx.fillRect(-w / 2, -h / 2, 14, h); ctx.fillRect(-w / 4, -h / 5, w / 2, 8);
+    ctx.restore();
+  }
+  ctx.fillStyle = pal.band; ctx.fillRect(100, 1220, 1064, 360);
+  ctx.fillStyle = pal.text;
+  type(ctx, 'JÓLABÓKAFLÓÐ', 1390, 150, '"Bebas Neue"', 960, '400');
+  ctx.fillStyle = pal.line;
+  type(ctx, 'THE CHRISTMAS EVE BOOK FLOOD', 1470, 34);
+  type(ctx, 'A BOOK, A BLANKET, A CHOCOLATE', 1530, 26, '"DM Sans"', 960, '500');
+}
+
+// Year in review: how many books, the favourite, and whose year it was.
+function readingYear() {
+  const now = new Date();
+  return now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+}
+const YEAR_GREY = { ground: '#ffffff', ink: '#181818', spines: ['#181818', '#a0a0a0', '#ffffff'], accent: '#181818' };
+const YEAR_COLOUR = { ground: '#eee9d8', ink: '#2f3a3a', spines: ['#4f6f5f', '#b8433a', '#d9b45a', '#c5bd96'], accent: '#b8433a' };
+function yearInBooks(ctx, data, pal = YEAR_GREY) {
+  printGround(ctx); ctx.fillStyle = pal.ground; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = pal.ink; frame(ctx);
+  const random = seeded(31);
+  ctx.lineWidth = 6;
+  for (let x = 170; x < 1080;) {
+    const w = 34 + random() * 30, h = 120 + random() * 90;
+    ctx.fillStyle = pal.spines[Math.floor(random() * pal.spines.length)];
+    ctx.fillRect(x, 420 - h, w, h); ctx.strokeRect(x, 420 - h, w, h); x += w + 6;
+  }
+  ctx.fillStyle = pal.ink; ctx.fillRect(150, 420, 964, 16);
+  type(ctx, `MY ${readingYear()} IN BOOKS`, 520, 54, '"Bebas Neue"', 900, '400');
+  const books = String(data.books ?? '').trim() || '?';
+  ctx.fillStyle = pal.accent; type(ctx, books, 930, 440, '"Bebas Neue"', 900, '400');
+  ctx.fillStyle = pal.ink;
+  type(ctx, books === '1' ? 'BOOK READ' : 'BOOKS READ', 1040, 90, '"Bebas Neue"', 900, '400');
+  ctx.fillStyle = pal.accent; lozenge(ctx, 632, 1120, 18);
+  ctx.fillStyle = pal.ink; type(ctx, 'FAVOURITE', 1210, 30);
+  const favourite = ownerText(data.favourite, 'The one I couldn’t put down');
+  type(ctx, favourite, 1310, 86, '"Cormorant Garamond"', 940, 'italic 700');
+  type(ctx, ownerText(data.name), 1480, 90, '"Caveat"', 900);
+}
+
+// A name in large lowercase serif with a lily between.
+function petal(ctx, angle, length, width, fill, random, pal) {
+  ctx.save(); ctx.rotate(angle);
+  ctx.beginPath(); ctx.moveTo(0, 0);
+  ctx.bezierCurveTo(width, -length * 0.25, width * 0.85, -length * 0.75, 0, -length);
+  ctx.bezierCurveTo(-width * 0.85, -length * 0.75, -width, -length * 0.25, 0, 0);
+  ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = pal.edge; ctx.lineWidth = 4; ctx.stroke();
+  ctx.strokeStyle = pal.vein; ctx.lineWidth = 5; printPath(ctx, [[0, -20], [0, -length * 0.85]]);
+  ctx.fillStyle = pal.spot;
+  for (let i = 0; i < 22; i++) {
+    const t = 0.18 + random() * 0.5, spread = width * 0.75 * Math.sin(Math.PI * t);
+    printDisc(ctx, (random() - 0.5) * spread, -length * t, 3 + random() * 4);
+  }
+  ctx.restore();
+}
+function lily(ctx, x, y, size, pal) {
+  const random = seeded(8);
+  ctx.save(); ctx.translate(x, y); ctx.scale(size, size);
+  for (let i = 0; i < 3; i++) petal(ctx, 0.35 + i * Math.PI * 2 / 3, 360, 135, pal.back, random, pal);
+  for (let i = 0; i < 3; i++) petal(ctx, 0.35 + Math.PI / 3 + i * Math.PI * 2 / 3, 380, 120, pal.front, random, pal);
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + (i - 2.5) * 0.5, ex = Math.cos(a) * 190, ey = Math.sin(a) * 190;
+    ctx.strokeStyle = pal.stem; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(ex * 0.4, ey * 0.7, ex, ey); ctx.stroke();
+    ctx.fillStyle = pal.anther; ctx.beginPath(); ctx.ellipse(ex, ey, 9, 24, a + Math.PI / 2, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+const LILY_GREY = { ground: '#3b3b3b', back: '#cfcfcf', front: '#ededed', edge: '#5a5a5a', vein: '#8a8a8a', spot: '#4a4a4a', stem: '#9a9a9a', anther: '#3a3030' };
+// Colour e-ink: muted, opaque pinks; the luminance steps keep it readable on a black-and-white Kindle.
+const LILY_PINK = { ground: '#3d3a3b', back: '#d99aab', front: '#efc6cf', edge: '#9b5b6c', vein: '#c07a8c', spot: '#7a2e45', stem: '#c9c08a', anther: '#6b2b2b' };
+function nameBloom(ctx, data, pal = LILY_GREY) {
+  ctx.fillStyle = pal.ground; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#ecebe6'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  const name = ownerText(data.name).toLowerCase();
+  type(ctx, `${name}${name.endsWith('s') ? '’' : '’s'}`, 430, 380, '"Playfair Display"', 1120);
+  type(ctx, ownerText(data.line2, 'kindle').toLowerCase(), 1560, 380, '"Playfair Display"', 1120);
+  lily(ctx, 632, 880, 1.2, pal);
+}
 // season controls catalogue collections; colour is optional display metadata.
 export const TEMPLATES = [
   { id: 'bookplate', label: 'Bookplate', named: true, draw: bookplate },
@@ -542,12 +762,19 @@ export const TEMPLATES = [
   { id: 'composition', label: 'Composition book', named: true, draw: composition },
   { id: 'orbital-study', label: 'Orbital study', named: false, draw: orbitalStudy },
   { id: 'bauhaus-press', label: 'Bauhaus press', named: false, draw: bauhausPress },
+  { id: 'name-bloom', label: 'Name in bloom', named: true, draw: nameBloom, inColour: (ctx, data) => nameBloom(ctx, data, LILY_PINK) },
   { id: 'paperback-author', label: 'Paperback author', named: true, draw: paperbackAuthor },
   { id: 'ochre-orchard', label: 'Quiet orchard', named: false, colour: true, draw: ochreOrchard },
   { id: 'tidal-colour', label: 'Low tide', named: false, colour: true, draw: tidalColour },
   { id: 'patchwork-colour', label: 'Quiet patchwork', named: false, colour: true, draw: patchworkColour },
   { id: 'autumn-badge', label: 'Autumn reading', named: false, season: 'autumn', draw: autumnBadge },
-  { id: 'book-tree', label: 'Book tree', named: false, season: 'christmas', draw: bookTree },
+  { id: 'book-tree', label: 'Book tree', named: false, season: 'christmas', draw: bookTree, inColour: (ctx, data) => bookTree(ctx, data, TREE_COLOUR) },
+  { id: 'fireside', label: 'Fireside', named: false, season: 'christmas', draw: fireside, inColour: (ctx, data) => fireside(ctx, data, FIRE_COLOUR) },
+  { id: 'snowy-window', label: 'Let it snow', named: false, season: 'christmas', draw: snowyWindow, inColour: (ctx, data) => snowyWindow(ctx, data, SNOW_COLOUR) },
+  { id: 'cocoa', label: 'Cocoa & chapters', named: false, season: 'christmas', draw: cocoaChapters, inColour: (ctx, data) => cocoaChapters(ctx, data, COCOA_COLOUR) },
+  { id: 'dear-santa', label: 'Dear Santa', named: true, fields: { name: true }, season: 'christmas', draw: dearSanta, inColour: (ctx, data) => dearSanta(ctx, data, SANTA_COLOUR) },
+  { id: 'book-flood', label: 'Christmas book flood', named: false, season: 'christmas', draw: bookFlood, inColour: (ctx, data) => bookFlood(ctx, data, FLOOD_COLOUR) },
+  { id: 'year-in-books', label: 'My year in books', named: true, fields: { name: true, books: true, favourite: true }, season: 'yearbooks', draw: yearInBooks, inColour: (ctx, data) => yearInBooks(ctx, data, YEAR_COLOUR) },
   { id: 'resolutions', label: 'Reading resolutions', named: true, season: 'newyear', draw: resolutions },
   { id: 'book-lover', label: 'Book lover', named: true, season: 'valentines', draw: bookLover },
 ];
